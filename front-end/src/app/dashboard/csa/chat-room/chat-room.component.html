@@ -1,0 +1,168 @@
+
+<div class="container">
+
+    <div class="row">
+        <div class="col-md-6 wrap-padding" *ngIf="privateChat">
+    <mat-card >
+        <mat-card-header>
+          <div mat-card-avatar><mat-icon style="color: greenyellow;">radio_button_checked</mat-icon></div>
+          <mat-card-title> Online Members</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <mat-chip-list >
+                <mat-chip  *ngFor="let user of onlineMembers">
+                  <mat-icon>account_box</mat-icon> {{user?.userName}}
+                </mat-chip>
+            </mat-chip-list>
+            </mat-card-content>
+            </mat-card>
+        </div>
+
+        <div class="col-md-6 wrap-padding" *ngIf="privateChat">
+            <mat-card >
+                <mat-card-header>
+                  <div mat-card-avatar><mat-icon>feedback</mat-icon></div>
+                  <mat-card-title> Choose an contact to begin private chat</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                          <label class="input-group-text" for="inputGroupSelect01">Choose an contact</label>
+                        </div>
+                        <select [(ngModel)]="newChatRoom" class="custom-select" id="inputGroupSelect01">
+
+                          <option *ngFor="let user of contact" [ngValue]="{'userName':user.userName,'_id':user._id}">{{user.userName}}</option>
+                        </select>
+                      </div>
+
+                        <button mat-button class="btn btn-success" (click)="createCSARoom()"><mat-icon>mail_outline</mat-icon> Send an Invite</button>
+
+                    </mat-card-content>
+                    </mat-card>
+        </div>
+    </div>
+    <br/>
+     <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+
+            <mat-card >
+                <mat-card-header>
+                  <div mat-card-avatar><mat-icon>chat</mat-icon></div>
+                  <mat-card-title> {{roomName}} chat room</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+
+                    <div class="messaging">
+                        <div class="inbox_msg">
+                          <div class="inbox_people">
+                            <div class="headind_srch">
+                              <div class="recent_heading">
+                                <h4>Recent</h4>
+                              </div>
+                              <div class="srch_bar">
+                                <div class="stylish-input-group">
+                                  <input type="text" class="search-bar" placeholder="Search" [(ngModel)]="searchText">
+                                  <span class="input-group-addon">
+                                  <button type="button"> <i class="fa fa-search" aria-hidden="true"></i> </button>
+                                  </span> </div>
+                              </div>
+                            </div>
+                            <div class="inbox_chat">
+
+                              <div class="chat_list active_chat"  *ngFor="let room of chatRooms | filter:searchText | paginate: { itemsPerPage: 10, currentPage: page }" (click)="chatHistory(room)">
+                                <div class="chat_people">
+                                  <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+                                  <div class="chat_ib">
+                                    <p>
+                                      <span *ngIf="room.namespace!='CUSTOMER-SERVICE-ASSOCIATIVE'">{{room?.roomName}} </span>
+                                      <span *ngIf="room.namespace=='CUSTOMER-SERVICE-ASSOCIATIVE'">
+                                        <span *ngFor="let user of room?.users">
+                                          <span *ngIf="user?._id!=userData.id">{{user?.userName}}</span>
+                                        </span>
+                                      </span>
+                                    </p>
+                                    <h5>
+                                      <span class="chat_date">{{room?.createdAt | date : 'dd-MM-yyyy hh:mm:ss a'}}</span>
+                                    </h5>
+                                    <p>{{room?.issue}}</p>
+                                  </div>
+                                </div>
+                              </div>
+                              <pagination-controls (pageChange)="page = $event"></pagination-controls>
+                            </div>
+                          </div>
+                          <div class="mesgs">
+                            <div class="msg_history" #chatScroll>
+                              <div class="message" *ngIf="acceptInvite && namespace==acceptInvite.namespace">
+                                <div class="message-icon">
+                                <mat-icon>notifications</mat-icon>
+                                </div>
+                                <div class="message-body">
+                                  <b>{{acceptInvite?.roomName}}, {{acceptInvite?.namespace | lowercase}}</b> has an issue on {{acceptInvite?.issue}}
+                                   <button mat-button class="btn btn-success" [disabled]="acceptInvite.accepted" (click)="acceptRoom(acceptInvite)">Resolve</button>
+                                </div>
+                                <!-- <button class="message-close" (click)="acceptInvite=null;"></button> -->
+                              </div>
+
+                              <div class="message" *ngIf="acceptCSAInvite && namespace==acceptInvite.namespace">
+                                <div class="message-icon">
+                                <mat-icon>notifications</mat-icon>
+                                </div>
+                                <div class="message-body">
+                                  <b>{{acceptCSAInvite?.owner.userName}}, {{acceptCSAInvite?.namespace | lowercase}}</b> has sent an invite to you, please accept it.
+                                   <button mat-button class="btn btn-success" [disabled]="acceptCSAInvite.accepted" (click)="acceptCSARoom(acceptCSAInvite)">Accept</button>
+                                </div>
+                                <!-- <button class="message-close" (click)=""></button> -->
+                              </div>
+
+                           <div class="message" *ngIf="notification.show">
+                            <div class="message-icon">
+                              <mat-icon>notifications</mat-icon>
+                              </div>
+                              <div class="message-body">
+                                <p>{{notification.message}}</p>
+                              </div>
+                           </div>
+
+                           <div class="message-warn" *ngIf="messageList.length==0">
+                            <div class="message-icon">
+                              <mat-icon>notifications</mat-icon>
+                              </div>
+                              <div class="message-body">
+                                <p>No chats available, please select any other chat room</p>
+                              </div>
+                           </div>
+
+                              <div  [ngClass]="{'incoming_msg': message.fromId!=userData.id, 'outgoing_msg':message.fromId==userData.id}" *ngFor="let message of messageList;">
+                                <!-- <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div> -->
+                                <div [ngClass]="{'received_msg': message.fromId!=userData.id, 'sent_msg':message.fromId==userData.id}">
+                                    {{message.fromName}}
+                                  <div class="received_withd_msg">
+                                    <p>  {{message.message}}</p>
+                                    <span class="time_date"> {{message.createdAt | date : 'dd-MM-yyyy hh:mm:ss a'}}</span></div>
+                                </div>
+                              </div>
+
+                            </div>
+                            <p [ngStyle]="{'visibility':_typingService.typing?.isTyping == true ? 'visible':'hidden'}" class="text-center text-warning"> {{_typingService.typing.userName}} is typing ....</p>
+                            <div class="type_msg">
+                              <div class="input_msg_write">
+                                <input type="text" class="write_msg" placeholder="Type a message" [(ngModel)]="newChat.message" (keypress)="typingEvent();" (keyup)="$event.keyCode == 13 && sendMessage()" />
+                                <button class="msg_send_btn" type="button" (click)="sendMessage()"><mat-icon>send</mat-icon></button>
+                              </div>
+                              <button *ngIf="chatRoom!='1'" class="btn-warning btn-block" mat-button (click)="endEmpJSChat();">End chat</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                    </mat-card-content>
+            </mat-card>
+        </div>
+     </div>
+
+</div>
+
+
+
+

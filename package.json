@@ -1,0 +1,43 @@
+{
+  "name": "hirevalley",
+  "version": "1.0.0",
+  "description": "hirevalley is a job recruitment application like indeed.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index",
+    "dev": "nodemon index",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "db_migrate_create": "./node_modules/.bin/migrate create initial_data -d mongodb://localhost:27017/hirevalley",
+    "db_migrate": "./node_modules/.bin/migrate up -d mongodb://localhost:27017/hirevalley",
+    "db_migrate_list": "./node_modules/.bin/migrate list -d mongodb://localhost:27017/hirevalley"
+  },
+  "keywords": [
+    "express",
+    "mongoose",
+    "nodemailer",
+    "socket.io"
+  ],
+  "author": "Manjunath V A",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^2.0.3"
+  },
+  "dependencies": {
+    "bcrypt": "^4.0.1",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "helmet": "^3.22.0",
+    "jsonwebtoken": "^8.5.1",
+    "mail-listener5": "^2.0.2",
+    "migrate-mongoose": "^4.0.0",
+    "moment": "^2.25.0",
+    "mongoose": "^5.9.11",
+    "multer": "^1.4.2",
+    "nodemailer": "^6.4.6",
+    "socket.io": "^2.3.0"
+  },
+  "engines": {
+    "node": "10.16.3",
+    "npm": "6.9.0"
+  }
+}

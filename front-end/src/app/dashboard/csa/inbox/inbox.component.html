@@ -1,0 +1,80 @@
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-4 col-sm-4 col-xs-12 padding-0">
+      <mat-card >
+        <mat-card-header>
+          <div mat-card-avatar><mat-icon>inbox</mat-icon></div>
+          <mat-card-title> Inbox</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="card border-dark mb-3">
+            <div class="card-header d-flex w-100 justify-content-between">
+              <b>Inbox</b>
+              <button mat-mini-fab matTooltip="Refresh" (click)="getAllInboxMails();"><mat-icon>refresh</mat-icon></button>
+            </div>
+            <div class="card-body text-dark">
+        
+                <!-- mat-table -->
+                <mat-form-field>
+                  <input matInput (keyup)="applyFilter($event.target.value)" placeholder="search">
+                </mat-form-field>
+
+                <mat-table [dataSource]="dataSource" class="full-width-table" matSort aria-label="Elements">
+               
+          
+                    <!-- mail from Column -->
+                    <ng-container matColumnDef="mail">
+                      <mat-header-cell *matHeaderCellDef mat-sort-header>mail</mat-header-cell>
+                      <mat-cell *matCellDef="let row" [ngClass]="{'list-group-item-action':row.isRead,'list-group-item-secondary':!row.isRead,'font-weight-bold':!row.isRead}">
+                        
+                        <a matRipple (click)="mailId=row._id;subject=row.subject"  class=" flex-column align-items-start ">
+                          <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1"><span class="badge-light">{{row.from}}</span></h5>
+                            <small><time>{{row.date | date:'dd-MM-yyyy hh:mm:ss a'}}</time></small>
+                            
+                          </div>
+                          <p class="mb-1">{{row.subject}}</p>
+                          <div class="d-flex w-100 justify-content-between">
+                            <small *ngIf="row.isRead == true"><span class="badge-pill badge-light">Seen</span></small>
+                            <small *ngIf="row.isRead == false"><span class="badge-pill badge-light">Unseen</span></small>
+                            <mat-icon *ngIf="row.attachments?.length>0">attach_file</mat-icon>
+                          </div>
+                       
+                        </a>
+                      
+                      </mat-cell>
+                    </ng-container>
+              
+                  <!-- <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr> -->
+                  <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                </mat-table>
+                <div style="text-align: center;" *ngIf="dataSource?.data.length === 0">No records found</div>
+
+                <mat-paginator #paginator
+                [length]="dataSource?.data.length"
+                [pageIndex]="0"
+                [pageSize]="5"
+                [pageSizeOptions]="[5,15,25, 50, 100, 250]">
+            </mat-paginator>
+
+              </div>
+              </div>
+          </mat-card-content>
+          </mat-card>
+     
+    </div>
+    <div class="col-md-8 col-sm-8 col-xs-12 padding-0">
+      <mat-card >
+        <mat-card-header>
+          <div mat-card-avatar><mat-icon>subject</mat-icon></div>
+          <mat-card-title> {{subject}}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <app-inbox-detail [mailId]="mailId" (refreshMail)="refreshMailInvoked($event);"></app-inbox-detail>
+          </mat-card-content>
+        </mat-card>
+    </div>
+  </div>
+</div>
+

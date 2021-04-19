@@ -1,0 +1,55 @@
+<div class="bg-image">
+  <div class="card">
+    <h4 class="card-title text-center">Welcome to Hirevalley</h4>
+  </div>
+
+  <div class="container">
+    <div class="row justify-content-md-center">
+      <div class="col-md-5 col-sm-12 col-xs-12">
+        <div class="card card-margin-top">
+          <h4 class="card-header text-center">
+            <mat-icon matSuffix>account</mat-icon> Login
+          </h4>
+          <div class="card-body">
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+              <mat-form-field appearance="outline" class="input-full-width">
+                <mat-label>Enter your email <span class="star">*</span></mat-label>
+                <input matInput placeholder="email" formControlName="email" />
+                <mat-icon matSuffix>email</mat-icon>
+                  <mat-error *ngIf="f.email.touched && f.email.errors?.required">
+                    email is required
+                  </mat-error>
+                  <mat-error *ngIf="f.email.touched && f.email.errors?.email">
+                    email is invalid
+                  </mat-error> 
+              </mat-form-field>
+  
+              <mat-form-field appearance="outline" class="input-full-width">
+                <mat-label>Enter your Password <span class="star">*</span></mat-label>
+                <input matInput [type]="hide ? 'password' : 'text'" formControlName="password" />
+                <button
+                  mat-icon-button
+                  matSuffix
+                  (click)="hide = !hide"
+                  [attr.aria-label]="'Hide password'"
+                  [attr.aria-pressed]="hide">
+                  <mat-icon>{{hide ? "visibility_off" : "visibility"}}</mat-icon>
+                </button>
+                <mat-error *ngIf="f.password.touched && f.password.errors?.required">
+                  Password is required
+                </mat-error>
+                <mat-error *ngIf="f.password.touched && f.password.errors?.minlength">
+                  Password should contain minimum of 5 characters.
+                </mat-error>
+              </mat-form-field>
+              <button type="submit" mat-raised-button color="accent">
+                Login
+              </button>
+              <a class="float-right" routerLink="/register">Register</a>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

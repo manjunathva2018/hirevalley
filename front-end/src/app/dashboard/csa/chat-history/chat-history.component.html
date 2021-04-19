@@ -1,0 +1,108 @@
+<div class="container">
+  <div class="row wrap-padding">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+      <mat-card>
+        <mat-card-header>
+          <div mat-card-avatar><mat-icon>history</mat-icon></div>
+          <mat-card-title> Communication history </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="messaging">
+            <div class="inbox_msg">
+              <div class="inbox_people">
+                <div class="headind_srch">
+                  <div class="recent_heading">
+                    <h4>Recent</h4>
+                  </div>
+                  <div class="srch_bar">
+                    <div class="stylish-input-group">
+                      <input
+                        type="text"
+                        class="search-bar"
+                        placeholder="Search" [(ngModel)]="searchText"/>
+                      <span class="input-group-addon">
+                        <button type="button">
+                          <i class="fa fa-search" aria-hidden="true"></i>
+                        </button>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="inbox_chat">
+                  <div
+                    class="chat_list active_chat"
+                    *ngFor="let room of chatRooms | filter:searchText | paginate: { itemsPerPage: 10, currentPage: page } "
+                    (click)="chatHistory(room)">
+                    <div class="chat_people">
+                      <div class="chat_img">
+                        <img
+                          src="https://ptetutorials.com/images/user-profile.png"
+                          alt="avatar"/>
+                      </div>
+                      <div class="chat_ib">
+                        <p>
+                          <span *ngIf="room.namespace != 'CUSTOMER-SERVICE-ASSOCIATIVE'">{{ room?.roomName }}
+                          </span>
+                        </p>
+                        <h5>
+                          <span class="chat_date">{{
+                            room?.createdAt | date: "dd-MM-yyyy hh:mm:ss a"
+                          }}</span>
+                        </h5>
+                        <p>{{ room?.issue }}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <pagination-controls (pageChange)="page = $event"></pagination-controls>
+                </div>
+              </div>
+              <div class="mesgs">
+                <div class="msg_history" #chatScroll>
+                  <div class="message-warn" *ngIf="messageList.length == 0">
+                    <div class="message-icon">
+                      <mat-icon>notifications</mat-icon>
+                    </div>
+                    <div class="message-body">
+                      <p>
+                        No chats available, please select any other chat history
+                      </p>
+                    </div>
+                  </div>
+
+                  <div
+                    [ngClass]="{
+                      incoming_msg: message.fromId != userData.id,
+                      outgoing_msg: message.fromId == userData.id}"
+                    *ngFor="let message of messageList">
+                    <!-- <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div> -->
+                    <div
+                      [ngClass]="{
+                        received_msg: message.fromId != userData.id,
+                        sent_msg: message.fromId == userData.id
+                      }">
+                      {{ message.fromName }}
+                      <div class="received_withd_msg">
+                        <p>{{ message.message }}</p>
+                        <span class="time_date">
+                          {{
+                            message.createdAt | date: "dd-MM-yyyy hh:mm:ss a"
+                          }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                  <!-- <div class="type_msg">
+                  <div class="input_msg_write">
+                  <input type="text" class="write_msg" placeholder="Type a message" [(ngModel)]="newChat.message" (keypress)="typingEvent();" (keyup)="$event.keyCode == 13 && sendMessage()" />
+                  <button class="msg_send_btn" type="button" (click)="sendMessage()"><mat-icon>send</mat-icon></button>
+                  </div>
+                  <button *ngIf="chatRoom!='1'" class="btn-warning btn-block" mat-button (click)="endEmpJSChat();">End chat</button>
+                  </div> -->
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

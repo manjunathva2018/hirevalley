@@ -1,0 +1,113 @@
+<div class="bg-image">
+  <div class="card">
+    <h4 class="card-title text-center">Welcome to Hirevalley</h4>
+  </div>
+  </div>
+
+  <div class="container">
+    <div class="row justify-content-md-center">
+      <div class="col-md-5 col-sm-12 col-xs-12">
+        <form [formGroup]="registerForm" novalidate (ngSubmit)="onSubmit()">
+          <mat-card class="card-margin-top">
+            <mat-card-header>
+              <mat-card-title>Register</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+            
+        
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Enter your username <span class="star">*</span></mat-label>
+                    <input matInput placeholder="username" formControlName="userName"/>
+                    <mat-icon matSuffix>user</mat-icon>
+                    <mat-error *ngIf="f.userName.touched && registerForm.controls['userName'].hasError('required')">
+                      userName name is <strong>required</strong>
+                    </mat-error>
+                  </mat-form-field>
+              
+        
+          
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Enter your email <span class="star">*</span></mat-label>
+                    <input matInput placeholder="email" formControlName="email"/>
+                    <mat-icon matSuffix>email</mat-icon>
+                    <mat-error *ngIf="f.email.touched && registerForm.controls['email'].hasError('required')">
+                      email is <strong>required</strong>
+                    </mat-error>
+                    <mat-error *ngIf="f.email.touched && f.email.errors?.email">
+                      email is invalid
+                    </mat-error>
+                  </mat-form-field>
+               
+             
+           
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Enter your Password <span class="star">*</span></mat-label>
+                    <input type="password" matInput placeholder="password" formControlName="password"/>
+                    <mat-error *ngIf="f.password.touched && f.password.errors?.required">
+                      Password is required
+                    </mat-error>
+                    <mat-error *ngIf="f.password.touched && f.password.errors?.minlength">
+                      Password should contain minimum of 5 characters.
+                    </mat-error>
+                  </mat-form-field>
+            
+        
+           
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Enter your confirm password <span class="star">*</span></mat-label>
+                    <input type="password" matInput placeholder="confirm password" formControlName="confirmPassword">
+                    <mat-error *ngIf="f.confirmPassword.touched && f.confirmPassword.errors?.required">
+                      Confirm password is required
+                    </mat-error>
+                    <mat-error *ngIf="f.confirmPassword.touched && f.confirmPassword.errors?.minlength">
+                      Confirm password should contain minimum of 5 characters.
+                    </mat-error>
+                    <mat-error *ngIf="f.confirmPassword.touched && registerForm.get('confirmPassword').hasError('passwordsNotMatching')">
+                    Passwords must match
+                   </mat-error>
+                 
+                  </mat-form-field>
+             
+        
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Enter your mobile number <span class="star">*</span></mat-label>
+                    <input matInput placeholder="mobile number" formControlName="mobileNo">
+                    <mat-icon matSuffix>phone</mat-icon>
+                    <mat-error *ngIf="f.mobileNo.touched && registerForm.controls['mobileNo'].hasError('required')">
+                      mobile number is <strong>required</strong>
+                    </mat-error>
+                  </mat-form-field>
+              
+           
+        
+            
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-select placeholder="select role" formControlName="role">
+                    <mat-option  [value]="1">
+                      Customer Service associative 
+                    </mat-option>
+                    <mat-option  [value]="2">
+                     Employer
+                    </mat-option>
+                    <mat-option  [value]="3">
+                      Job-seeker
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="f.role.touched && registerForm.controls['role'].hasError('required')">
+                    role is <strong>required</strong>
+                  </mat-error>
+                </mat-form-field>
+            
+          
+            </mat-card-content>
+            <mat-card-actions>
+              <button mat-raised-button color="accent" type="submit">Submit</button>
+             <a class="float-right" routerLink="/login">Go to login</a>
+            </mat-card-actions>
+          </mat-card>
+        </form>
+        </div>
+        </div>
+        </div>
+
+

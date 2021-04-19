@@ -1,0 +1,11 @@
+@import  './../../../../styles.scss';
+
+.custom-file-upload {
+    display: block;
+    width: auto;
+    font-size: 16px;
+    margin-top: 10px;
+    border: 2px dotted $primary;
+    background-color: $accent;
+    padding: 10px;
+  }

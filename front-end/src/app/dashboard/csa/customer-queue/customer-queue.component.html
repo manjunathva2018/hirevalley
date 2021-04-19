@@ -1,0 +1,229 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12 wrap-padding" *ngIf="!showChatBox">
+      <mat-card class="text-dark">
+        <mat-card-header>
+          <div mat-card-avatar><mat-icon>queue</mat-icon></div>
+          <mat-card-title> Chat queue</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <!-- mat-table -->
+          <mat-form-field>
+            <input matInput (keyup)="applyFilter($event.target.value)" placeholder="search" />
+          </mat-form-field>
+
+          <mat-table [dataSource]="dataSource" class="full-width-table" matSort aria-label="Elements">
+            <!-- Checkbox Column -->
+            <ng-container matColumnDef="select">
+              <mat-header-cell *matHeaderCellDef>
+                <mat-checkbox
+                  (change)="$event ? masterToggle() : null"
+                  [checked]="selection.hasValue() && isAllSelected()"
+                  [indeterminate]="selection.hasValue() && !isAllSelected()"
+                  [aria-label]="checkboxLabel()"
+                >
+                </mat-checkbox>
+                <button mat-button (click)="deleteSelcted()"><mat-icon>delete_forever</mat-icon>Delete</button>
+              </mat-header-cell>
+              <mat-cell *matCellDef="let row">
+                <mat-checkbox
+                  (click)="$event.stopPropagation()"
+                  (change)="$event ? selection.toggle(row) : null"
+                  [checked]="selection.isSelected(row)"
+                  [aria-label]="checkboxLabel(row)"
+                >
+                </mat-checkbox>
+              </mat-cell>
+            </ng-container>
+
+            <!-- index Column -->
+            <ng-container matColumnDef="index">
+              <mat-header-cell *matHeaderCellDef mat-sort-header
+                ><mat-icon>format_list_numbered</mat-icon>Number</mat-header-cell
+              >
+              <mat-cell *matCellDef="let row; let index = index">
+                {{ index + 1 }}
+              </mat-cell>
+            </ng-container>
+
+            <!-- RequestedAt Column -->
+            <ng-container matColumnDef="requestedAt">
+              <mat-header-cell *matHeaderCellDef mat-sort-header
+                ><mat-icon>access_time</mat-icon> Requested At</mat-header-cell
+              >
+              <mat-cell *matCellDef="let row">
+                {{ row.createdAt | date: "dd-MM-yyyy hh:mm:ss a" }}
+              </mat-cell>
+            </ng-container>
+
+            <!-- userName Column -->
+            <ng-container matColumnDef="userName">
+              <mat-header-cell *matHeaderCellDef mat-sort-header
+                ><mat-icon>account_circle</mat-icon> Userame</mat-header-cell
+              >
+              <mat-cell *matCellDef="let row">
+                {{ row.payload?.roomName }}
+              </mat-cell>
+            </ng-container>
+
+            <!-- userName Column -->
+            <ng-container matColumnDef="role">
+              <mat-header-cell *matHeaderCellDef mat-sort-header
+                ><mat-icon>verified_user</mat-icon> Role</mat-header-cell
+              >
+              <mat-cell *matCellDef="let row">
+                {{ row.payload?.namespace | lowercase }}
+              </mat-cell>
+            </ng-container>
+
+            <!-- userName Column -->
+            <ng-container matColumnDef="issue">
+              <mat-header-cell *matHeaderCellDef mat-sort-header><mat-icon>live_help</mat-icon> Issue</mat-header-cell>
+              <mat-cell *matCellDef="let row">
+                {{ row.payload?.issue }}
+              </mat-cell>
+            </ng-container>
+
+            <!-- Acknowledge Column -->
+            <ng-container matColumnDef="ack">
+              <mat-header-cell *matHeaderCellDef mat-sort-header><mat-icon>loop</mat-icon> Resolve</mat-header-cell>
+              <mat-cell *matCellDef="let row; let index = index">
+                <button
+                  [disabled]="index > 0"
+                  mat-raised-button
+                  (click)="acknowledgeRoom(row)"
+                  *ngIf="row.ack?.userName == null"
+                >
+                  Resolve
+                </button>
+                <span *ngIf="row.ack?.userName != null">{{ row.ack?.userName }}</span>
+              </mat-cell>
+            </ng-container>
+
+            <!-- Chat End Time  Column -->
+            <ng-container matColumnDef="chatEnd">
+              <mat-header-cell *matHeaderCellDef mat-sort-header
+                ><mat-icon>timer</mat-icon> Chat End Time
+              </mat-header-cell>
+              <mat-cell *matCellDef="let row">
+                {{ row.deleted | date: "hh:mm:ss a" }}
+              </mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row
+              *matRowDef="let row; columns: displayedColumns"
+              [ngClass]="{
+                ack: row.ack?.userName != null,
+                new: row.ack?.userName == null
+              }"
+            ></mat-row>
+          </mat-table>
+          <div style="text-align: center;" *ngIf="dataSource?.data.length === 0">
+            No records found
+          </div>
+
+          <mat-paginator
+            #paginator
+            [length]="dataSource?.data.length"
+            [pageIndex]="0"
+            [pageSize]="15"
+            [pageSizeOptions]="[15, 25, 50, 100, 250]"
+          >
+          </mat-paginator>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    <div class="col-md-10 col-sm-12 col-xs-12 wrap-padding" *ngIf="showChatBox">
+      <mat-card>
+        <mat-card-header>
+          <div mat-card-avatar><mat-icon>chat</mat-icon></div>
+          <mat-card-title>
+            {{ room.roomName }} - {{ room.issue }}
+            <button mat-mini-fab color="default" matTooltip="go to  email" (click)="goToEmail()">
+              <mat-icon>forward_to_inbox</mat-icon>
+            </button>
+            <button mat-mini-fab color="default" matTooltip="go to communication history" (click)="goToHistory()">
+              <mat-icon>history_toggle_off</mat-icon>
+            </button>
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="messaging">
+            <div class="inbox_msg">
+              <div class="mesgs">
+                <div class="msg_history" #chatScroll>
+                  <div class="message" *ngIf="notification.show">
+                    <div class="message-icon">
+                      <mat-icon>notifications</mat-icon>
+                    </div>
+                    <div class="message-body">
+                      <p>{{ notification.message }}</p>
+                    </div>
+                  </div>
+
+                  <div class="message-warn" *ngIf="messageList.length == 0">
+                    <div class="message-icon">
+                      <mat-icon>notifications</mat-icon>
+                    </div>
+                    <div class="message-body">
+                      <p>No chats available yet !</p>
+                    </div>
+                  </div>
+
+                  <div
+                    [ngClass]="{
+                      incoming_msg: message.fromId != userData.id,
+                      outgoing_msg: message.fromId == userData.id
+                    }"
+                    *ngFor="let message of messageList"
+                  >
+                    <!-- <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div> -->
+                    <div
+                      [ngClass]="{
+                        received_msg: message.fromId != userData.id,
+                        sent_msg: message.fromId == userData.id
+                      }"
+                    >
+                      {{ message.fromName }}
+                      <div class="received_withd_msg">
+                        <p>{{ message.message }}</p>
+                        <span class="time_date"> {{ message.createdAt | date: "dd-MM-yyyy hh:mm:ss a" }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <p
+                  [ngStyle]="{
+                    visibility: _typingService.typing?.isTyping == true ? 'visible' : 'hidden'
+                  }"
+                  class="text-center text-warning"
+                >
+                  {{ _typingService.typing.userName }} is typing ....
+                </p>
+                <div class="type_msg">
+                  <div class="input_msg_write">
+                    <input
+                      type="text"
+                      class="write_msg"
+                      placeholder="Type a message"
+                      [(ngModel)]="newChat.message"
+                      (keypress)="typingEvent()"
+                      (keyup)="$event.keyCode == 13 && sendMessage()"
+                    />
+                    <button class="msg_send_btn" type="button" (click)="sendMessage()">
+                      <mat-icon>send</mat-icon>
+                    </button>
+                  </div>
+                  <button *ngIf="chatRoom != '1'" class="btn-warning btn-block" mat-button (click)="endEmpJSChat()">
+                    End chat
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

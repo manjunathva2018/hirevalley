@@ -1,0 +1,1 @@
+require('./chat-module/socketEvents');

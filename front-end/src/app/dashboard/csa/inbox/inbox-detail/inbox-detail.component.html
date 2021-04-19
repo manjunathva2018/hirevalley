@@ -1,0 +1,36 @@
+<div *ngIf="mailObj?.from;else mailTemplate" class="card border-dark mb-3">
+  <div class="card-header d-flex w-100 justify-content-between">
+    <button mat-mini-fab  matTooltip="Delete" mat-raised-button (click)="deleteThread(mailObj._id);"><mat-icon>delete</mat-icon></button>
+    <button mat-mini-fab  matTooltip="Forward" mat-raised-button (click)="forward(mailObj._id);"><mat-icon>forward</mat-icon></button>
+    <button mat-mini-fab  matTooltip="Resend" mat-raised-button (click)="resend(mailObj._id);"><mat-icon>repeat</mat-icon></button>
+    
+  </div>
+  <div class="card-body text-dark">
+   <!-- <h3> <mat-icon>subject</mat-icon> &nbsp; <b>{{mailObj.subject}}</b></h3>  -->
+      <h4 class="alert alert-info"> From : <span class="badge badge-light">{{mailObj.from}}</span> on <span class="badge badge-light">{{mailObj.date | date : 'dd-MM-yyyy hh:mm:ss a'}}</span></h4>
+      <div class="alert alert-secondary" role="alert">
+       <h4>To : <span class="badge badge-light">{{mailObj.to}}</span> </h4> 
+      </div>
+      <div *ngIf="mailObj.attachments?.length>0" >
+       <h5><mat-icon>attach_file</mat-icon>  Attachments : </h5> 
+        <div class="card" *ngFor="let attachments of mailObj.attachments">
+          <button class="btn btn-default" (click)="downloadAttachment(attachments.filename)"> {{attachments.filename}} </button>
+        </div>
+      </div>
+      <div [innerHTML]="mailObj.html">
+            
+      </div>
+  </div>
+</div>
+
+<ng-template #mailTemplate>
+  <div class="container" style="padding: 25%;border:1px solid black;border-radius: 5px;">
+    <div class="row justify-content-center">
+      <div class="col align-self-center text-center" >
+        <mat-icon style=" font-size: 50px;">email</mat-icon> 
+        <h3 class="text-muted">Select an email to read</h3>
+      </div>
+    </div>
+  </div>  
+</ng-template>
+

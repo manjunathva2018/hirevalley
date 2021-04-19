@@ -1,0 +1,116 @@
+
+<div class="container wrap-padding">
+    <div class="row">
+        <!-- <div class="col-md-10 col-sm-12 col-xs-12 wrap-padding">
+          <mat-card>
+            <mat-card-header>
+              <div mat-card-avatar><mat-icon>comment</mat-icon></div>
+              <mat-card-title>Notifications</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="card">
+              </div>
+              </mat-card-content>
+              </mat-card>
+        </div> -->
+
+        <!-- <div class="col-md-4 col-sm-12 col-xs-12 wrap-padding">
+          <mat-card>
+            <mat-card-header>
+              <mat-card-title>Chat History</mat-card-title>
+              <mat-card-subtitle>select an chat from the lists</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <mat-nav-list *ngFor="let room of chatRooms">
+                <a mat-list-item (click)="chatHistory(room);">
+                  <p><mat-icon>account_circle</mat-icon>
+                    <b>{{room?.owner?.userName}}</b></p>
+                  <small>{{room?.issue}}</small>
+                </a>
+                <mat-divider></mat-divider>
+              </mat-nav-list>
+              </mat-card-content>
+              </mat-card>
+        </div> -->
+
+        <div class="col-md-6 col-sm-12 col-xs-12 offset-md-6">
+          <div class="chat-box">
+            <div class="chat-header">
+              <h1 class="chat-title">
+                <span *ngFor="let chatUser of room?.users">
+                <span *ngIf="chatUser?._id!=userData.id">{{chatUser?.userName}}</span>
+              </span>
+            </h1>
+              <!-- <a class="chat-close" >×</a> -->
+            </div>
+            <div class="chat-body">
+              <mat-card>
+                <mat-card-header>
+                  <mat-card-title>Resolve an Issue</mat-card-title>
+                  <mat-card-subtitle>select an issue from the lists</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <p>
+                   Select any one issue and begin the chat with our customer service associative.
+                  </p>
+                  <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                      <label class="input-group-text" for="inputGroupSelect01">Choose an Issue</label>
+                    </div>
+                    <select [(ngModel)]="selectedIssue"  class="custom-select" id="inputGroupSelect01">
+                      <option>1. account related - a. account not working</option>
+                      <option>1. account related - b. Unable to change password</option>
+                      <option>2.Payment related - a. refund not received</option>
+                      <option>2.Payment related - b. Payment not received</option>
+                      <option>3. Other issues </option>
+                    </select>
+                  </div>
+                </mat-card-content>
+                <mat-card-actions>
+                    <button mat-button class="btn btn-success" (click)="createRoom()">Begin Chat</button>
+
+                </mat-card-actions>
+              </mat-card>
+              <div class="chat-content" #chatScroll>
+
+                <div class="chat-timeline"><span>Today</span></div>
+
+                  <div *ngIf="notification.show" class="chat-item is-warning">
+                  <p class="chat-message">{{notification.message}}</p>
+                </div>
+
+                <div *ngIf="onlineCSAMembers.length==0" class="chat-item is-error">
+                  <p class="chat-message"> All of our customer service associatives are currently offline. Please come back after a while on our working hours.</p>
+                </div>
+
+                <div *ngFor="let message of messageList;">
+                        <div class="chat-item" [ngClass]="{'is-you': message.fromId!=userData.id, 'is-me':message.fromId==userData.id}" >
+                            <time class="chat-time">{{message.createdAt | date : 'dd-MM-yyyy hh:mm:ss a'}} <small><b>{{message.fromName}}</b></small></time>
+                            <p class="chat-message"> {{message.message}}</p>
+                          </div>
+                    </div>
+
+                    <p [ngStyle]="{'visibility':_typingService.typing?.isTyping == true ? 'visible':'hidden'}" class="text-center text-warning"> {{_typingService.typing.userName}} is typing ....</p>
+                <form class="chat-form">
+                  <input [disabled]="onlineCSAMembers.length==0" class="chat-form-input" type="text" placeholder="Enter your message"  [(ngModel)]="newChat.message" (keyup)="$event.keyCode == 13 && sendMessage()" (keypress)="typingEvent()" [ngModelOptions]="{standalone: true}"/>
+                  <a class="button" (click)="sendMessage()">Send</a>
+                </form>
+
+                <button mat-button class="btn btn-info" (click)="leaveRoom()">End Chat</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+    </div>
+</div>
+
+
+
+
+
+
+
+
+

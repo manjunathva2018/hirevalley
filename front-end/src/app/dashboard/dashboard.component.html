@@ -1,0 +1,40 @@
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav #drawer class="sidenav" fixedInViewport
+      [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+      [mode]="(isHandset$ | async) ? 'over' : 'side'"
+      [opened]="(isHandset$ | async) === false">
+    <mat-toolbar color="primary">Hirevalley</mat-toolbar>
+    <mat-nav-list *ngFor="let list of navList">
+      <a mat-list-item routerLink="{{list.link}}" routerLinkActive="active">
+        <!-- <i mat-list-icon class="{{list.icon}}"></i> -->
+        <mat-icon>{{list.icon}}</mat-icon>
+        <span> {{list.label}} </span></a>
+      <mat-divider></mat-divider>
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <mat-toolbar color="primary">
+      <button
+        type="button"
+        aria-label="Toggle sidenav"
+        mat-icon-button
+        (click)="drawer.toggle()"
+        *ngIf="isHandset$ | async">
+        <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+      </button>
+      <span class="fill-remaining-space"> <mat-chip-list>
+        <mat-chip color="primary" selected  matTooltip="Role"><span *ngIf="user"><span *ngIf="user">{{user?.roleName}}</span></span></mat-chip>
+        </mat-chip-list></span>
+     
+      <button color="accent"  matTooltip="Username" mat-raised-button [matMenuTriggerFor]="appMenu">
+        <mat-icon class="side-nav-mat-icon">account_circle</mat-icon><span *ngIf="user"><span>{{user?.userName}}</span></span>
+    </button>
+    <mat-menu #appMenu="matMenu">
+        <button mat-menu-item (click)="logout()"><i class="fa fa-sign-out"></i> Logout</button>
+    </mat-menu>
+    </mat-toolbar>
+    <!-- Add Content Here -->
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>
+
