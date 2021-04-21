@@ -7,7 +7,7 @@ var onlineAgents = []
 
 io.on("connection", function (socket) {
   const socketQuery = socket.handshake.query
-  let userData = JSON.parse(socketQuery.userData)
+  let userData = JSON.parse(socketQuery.userData) || {}
   userData.socketId = socket.id
   userData.isBusy = false
   console.log("user connected", userData)
@@ -112,7 +112,9 @@ io.on("connection", function (socket) {
 
   socket.on("leave-room", (room) => {
     socket.leave(room, () => {
-      socket.to(room.roomName).emit("user-left", room)
+      if (room.roomName !== "") {
+        socket.to(room.roomName).emit("user-left", room)
+      }
     })
   })
 

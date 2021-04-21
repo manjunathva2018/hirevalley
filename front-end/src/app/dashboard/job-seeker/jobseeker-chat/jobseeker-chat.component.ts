@@ -106,13 +106,15 @@ export class JobseekerChatComponent implements OnInit, OnDestroy, AfterViewCheck
   }
 
   ngAfterViewChecked() {
-    this.scrollToBottom();
+
   }
 
   scrollToBottom(): void {
     try {
       this.chatScrollContainer.nativeElement.scrollTop = this.chatScrollContainer.nativeElement.scrollHeight;
-    } catch (err) { }
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   ngOnDestroy(): void {
@@ -186,6 +188,7 @@ export class JobseekerChatComponent implements OnInit, OnDestroy, AfterViewCheck
   chatHistory(room): void {
     this._chatHistoryService.getAllChatsByRoomId(room._id).subscribe(resp => {
       this.messageList = resp.chatData;
+      this.scrollToBottom();
     }, err => {
       this.toastr.error(err.error.error, 'chat history error');
     })

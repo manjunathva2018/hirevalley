@@ -201,14 +201,14 @@ export class CustomerQueueComponent implements OnInit, AfterViewInit, AfterViewC
 
 
   ngAfterViewChecked() {
-    this.scrollToBottom();
+
   }
 
   scrollToBottom(): void {
     try {
       this.chatScrollContainer.nativeElement.scrollTop = this.chatScrollContainer.nativeElement.scrollHeight;
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   }
 
@@ -231,6 +231,7 @@ export class CustomerQueueComponent implements OnInit, AfterViewInit, AfterViewC
     // this.joinParticularRoom();
     this._chatHistoryService.getAllChatsByRoomId(room._id).subscribe(resp => {
       this.messageList = resp.chatData;
+      this.scrollToBottom();
     }, err => {
       this.toastr.error(err.error.error, 'chat history error');
     })

@@ -51,7 +51,9 @@ export class RoomChatService {
   }
 
   public leaveRoom(room) {
-    this.socket.emit('leave-room', room);
+    if (room.roomName !== "") {
+      this.socket.emit('leave-room', room);
+    }
   }
 
   public updateCSABusy(user) {
